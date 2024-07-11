@@ -1,15 +1,25 @@
-<header class="bg-gray-800 text-white py-4">
-    <div class="container mx-auto flex justify-between items-center px-4">
-        <h1 class="text-2xl font-bold">Kuripp</h1>
-        <nav>
-            <ul class="flex space-x-4">
+{% load static %}
+<header class="bg-white shadow-md">
+    <nav class="container mx-auto px-4 py-4 relative">
+        <div class="flex justify-between items-center">
+            <a href="{% url 'home' %}" class="text-xl font-bold text-primary">Kuripp</a>
+            
+            <div class="flex items-center space-x-4">
                 {% if user.is_authenticated %}
-                    <li><a href="{% url 'profile' %}" class="hover:underline">Profile</a></li>
-                    <li><a href="{% url 'logout' %}" class="hover:underline">Logout</a></li>
+                    <a href="{% url 'home' %}" class="text-gray-600 hover:text-primary">Dashboard</a>
+                    <a href="{% url 'profile' %}" class="text-gray-600 hover:text-primary">Profile</a>
+                    <a href="{% url 'logout' %}" class="text-gray-600 hover:text-primary">Logout</a>
                 {% else %}
-                    <li><a href="{% url 'login' %}" class="hover:underline">Login</a></li>
+                    <a href="{% url 'login' %}" class="text-gray-600 hover:text-primary">Login</a>
+                    <a href="{% url 'signup' %}" class="text-gray-600 hover:text-primary">Sign Up</a>
                 {% endif %}
-            </ul>
-        </nav>
-    </div>
+            </div>
+        </div>
+        
+        {% if user.is_authenticated %}
+        <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <a href="{% url 'add_session' %}" class="btn btn-primary">Log Session</a>
+        </div>
+        {% endif %}
+    </nav>
 </header>

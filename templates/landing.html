@@ -1,69 +1,60 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Welcome to Kuripp{% endblock %}
+{% block title %}Kuripp - Your Writing Companion{% endblock %}
 {% block content %}
-
-<div class="hero bg-cover bg-center h-screen flex items-center justify-center" style="background-image: url('{% static 'images/landing-bg.jpg' %}');">
-    <div class="text-center bg-white bg-opacity-90 p-12 rounded-lg shadow-lg max-w-xl mx-auto">
-        <h1 class="text-6xl font-extrabold text-gray-800 mb-8">Kuripp</h1>
-        <p class="text-2xl text-gray-600 mb-8">Track and analyze your writing sessions with ease.</p>
-        <div class="flex justify-center space-x-4">
-            <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Get Started</a>
-            <a href="{% url 'login' %}" class="btn btn-secondary btn-lg">Login</a>
+<header class="bg-gray-50 py-20">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-5xl font-serif font-bold text-gray-900 mb-6">Elevate Your Writing Journey</h1>
+            <p class="text-xl text-gray-600 mb-8">Kuripp: The elegant tool for writers to track, analyze, and improve their craft.</p>
+            <div class="space-x-4">
+                <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Start Writing</a>
+                <a href="{% url 'login' %}" class="btn btn-secondary btn-lg">Sign In</a>
+            </div>
         </div>
     </div>
-</div>
+</header>
 
-<div class="container mx-auto py-20 px-6">
-    <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-gray-800 mb-4">Features</h2>
-        <p class="text-xl text-gray-600">Powerful tools to enhance your writing productivity.</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-        <div class="bg-white p-8 rounded-lg shadow-lg text-center transition-transform transform hover:scale-105">
-            <img src="{% static 'images/feature-1.svg' %}" alt="Track Your Sessions" class="mx-auto h-24 mb-6">
-            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Track Your Sessions</h3>
-            <p class="text-lg text-gray-600">Log your writing sessions with detailed statistics and insights.</p>
-        </div>
-        <div class="bg-white p-8 rounded-lg shadow-lg text-center transition-transform transform hover:scale-105">
-            <img src="{% static 'images/feature-2.svg' %}" alt="Analyze Performance" class="mx-auto h-24 mb-6">
-            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Analyze Performance</h3>
-            <p class="text-lg text-gray-600">Comprehensive analytics and reports to track your progress.</p>
-        </div>
-        <div class="bg-white p-8 rounded-lg shadow-lg text-center transition-transform transform hover:scale-105">
-            <img src="{% static 'images/feature-3.svg' %}" alt="Join the Community" class="mx-auto h-24 mb-6">
-            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Join the Community</h3>
-            <p class="text-lg text-gray-600">Connect with a vibrant community of writers and stay motivated.</p>
-        </div>
-    </div>
-</div>
-
-<div class="bg-gray-100 py-20">
-    <div class="container mx-auto text-center">
-        <h2 class="text-4xl font-bold text-gray-800 mb-10">What Our Users Say</h2>
+<section class="py-20">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-serif font-bold text-center mb-12">Craft Your Story with Precision</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                <p class="text-gray-600 italic mb-6">"Kuripp has transformed the way I track my writing progress. The detailed analytics keep me motivated every day."</p>
-                <p class="text-gray-800 font-bold">- Jane Doe, Novelist</p>
+            <div class="text-center">
+                <img src="{% static 'images/icon-track.svg' %}" alt="Track" class="h-16 mx-auto mb-4">
+                <h3 class="text-xl font-semibold mb-2">Track Your Progress</h3>
+                <p class="text-gray-600">Log your writing sessions and watch your story unfold, word by word.</p>
             </div>
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                <p class="text-gray-600 italic mb-6">"As a screenwriter, Kuripp helps me stay organized and focused. I love the community feature."</p>
-                <p class="text-gray-800 font-bold">- John Smith, Screenwriter</p>
+            <div class="text-center">
+                <img src="{% static 'images/icon-analyze.svg' %}" alt="Analyze" class="h-16 mx-auto mb-4">
+                <h3 class="text-xl font-semibold mb-2">Analyze Your Work</h3>
+                <p class="text-gray-600">Gain insights into your writing patterns and productivity trends.</p>
             </div>
-            <div class="bg-white p-8 rounded-lg shadow-lg">
-                <p class="text-gray-600 italic mb-6">"The best tool for writers. Kuripp's features are unmatched and it's incredibly user-friendly."</p>
-                <p class="text-gray-800 font-bold">- Emily Johnson, Blogger</p>
+            <div class="text-center">
+                <img src="{% static 'images/icon-community.svg' %}" alt="Connect" class="h-16 mx-auto mb-4">
+                <h3 class="text-xl font-semibold mb-2">Connect with Writers</h3>
+                <p class="text-gray-600">Join a community of like-minded authors for support and inspiration.</p>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<div class="bg-primary py-20">
-    <div class="container mx-auto text-center text-white">
-        <h2 class="text-4xl font-bold mb-6">Join Kuripp Today</h2>
-        <p class="text-xl mb-6">Sign up now and start enhancing your writing productivity with Kuripp's powerful features.</p>
-        <a href="{% url 'signup' %}" class="btn btn-secondary btn-lg">Get Started</a>
+<section class="bg-gray-50 py-20">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-serif font-bold text-center mb-12">What Writers Say</h2>
+        <div class="max-w-4xl mx-auto">
+            <blockquote class="text-center italic text-xl text-gray-600 mb-4">
+                "Kuripp has transformed my writing routine. It's the companion every author needs."
+            </blockquote>
+            <p class="text-center font-semibold">- Margaret Atwood, Novelist</p>
+        </div>
     </div>
-</div>
+</section>
 
+<section class="py-20">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-3xl font-serif font-bold mb-6">Begin Your Writing Journey</h2>
+        <p class="text-xl text-gray-600 mb-8">Join thousands of writers who trust Kuripp to enhance their craft.</p>
+        <a href="{% url 'signup' %}" class="btn btn-primary btn-lg">Get Started for Free</a>
+    </div>
+</section>
 {% endblock %}

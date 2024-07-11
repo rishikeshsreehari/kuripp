@@ -1,45 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Kuripp{% endblock %}</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-</head>
+{% include 'head.html' %}
 <body class="flex flex-col min-h-screen">
+    {% include 'header.html' %}
 
-    <!-- Header -->
-    <header class="bg-gray-800 text-white py-4">
-        <div class="container mx-auto flex justify-between items-center px-4">
-            <div class="logo">
-                <a href="{% url 'home' %}" class="text-2xl font-bold">Kuripp</a>
-            </div>
-            <nav>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'home' %}" class="px-4">Home</a>
-                    <a href="{% url 'profile' %}" class="px-4">Profile</a>
-                    <a href="{% url 'logout' %}" class="px-4">Logout</a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="px-4">Login</a>
-                    <a href="{% url 'signup' %}" class="px-4">Signup</a>
-                {% endif %}
-            </nav>
-        </div>
-    </header>
-
-    <!-- Main content -->
     <main class="flex-grow">
-        {% block content %}{% endblock %}
+        {% block content %}
+        {% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-4 mt-auto w-full">
-        <div class="container mx-auto text-center">
-            {{ footer_text }}
-        </div>
-    </footer>
+    {% include 'footer.html' %}
 
+    {% block extra_js %}
+    {% endblock %}
 </body>
 </html>
