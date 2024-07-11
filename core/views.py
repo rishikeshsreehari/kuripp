@@ -4,11 +4,13 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
-from .forms import CustomUserCreationForm
 from config import FOOTER_TEXT
+from .models import UserProfile, WritingSession  # Import the WritingSession model
+from .forms import CustomUserCreationForm, UserProfileForm, UserForm, WritingSessionForm
+from django.utils import timezone
 
-def home(request):
-    return render(request, 'landing.html', {'footer_text': FOOTER_TEXT})
+
+
 
 def signup(request):
     if request.method == "POST":
@@ -20,10 +22,6 @@ def signup(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form, 'footer_text': FOOTER_TEXT})
-
-@login_required
-def profile(request):
-    return render(request, 'profile.html', {'footer_text': FOOTER_TEXT})
 
 def login_view(request):
     if request.method == "POST":
@@ -46,6 +44,65 @@ def logout_view(request):
     logout(request)
     messages.success(request, "You have been successfully logged out.")
     return redirect('home')
+
+
+
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile was successfully updated!')
+            return redirect('profile')
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = UserProfileForm(instance=request.user.userprofile)
+    return render(request, 'edit_profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'footer_text': FOOTER_TEXT,
+    })
+
+@login_required
+def profile(request):
+    user = request.user
+    profile = user.userprofile
+
+    # Fetching all writing sessions for the logged-in user
+    writing_sessions = WritingSession.objects.filter(user=user)
+
+    # Calculating analytics
+    number_of_sessions = writing_sessions.count()
+    total_words = sum(session.number_of_words for session in writing_sessions)
+    avg_wpm = total_words / number_of_sessions if number_of_sessions > 0 else 0
+
+    context = {
+        'user': user,
+        'profile': profile,
+        'number_of_sessions': number_of_sessions,
+        'avg_wpm': avg_wpm,
+        'current_streak': 0,  # Placeholder for current streak calculation
+        'footer_text': FOOTER_TEXT,
+    }
+
+    return render(request, 'profile.html', context)
+
+
+
+
+
+@login_required
+def home(request):
+    user = request.user
+    writing_sessions = WritingSession.objects.filter(user=user).order_by('-start_time')
+    return render(request, 'home.html', {'writing_sessions': writing_sessions, 'footer_text': FOOTER_TEXT})
+
+
+
 
 
 @login_required

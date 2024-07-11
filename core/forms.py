@@ -2,19 +2,11 @@ from django import forms
 from .models import WritingSession
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from .models import UserProfile
+from django.utils import timezone
+       
 
-class WritingSessionForm(forms.ModelForm):
-    class Meta:
-        model = WritingSession
-        fields = ['session_name', 'words_written', 'start_time', 'end_time', 'duration', 'photo', 'description', 'excerpt']
-        widgets = {
-            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'input input-bordered w-full'}),
-            'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'input input-bordered w-full'}),
-            'duration': forms.TimeInput(attrs={'type': 'time', 'class': 'input input-bordered w-full'}),
-            'photo': forms.FileInput(attrs={'class': 'input input-bordered w-full'}),
-            'description': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full'}),
-            'excerpt': forms.Textarea(attrs={'class': 'textarea textarea-bordered w-full'}),
-        }
+
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -34,3 +26,28 @@ class CustomUserCreationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+    
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['location', 'bio', 'profile_image']
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name']
+        
+ 
+class WritingSessionForm(forms.ModelForm):
+    class Meta:
+        model = WritingSession
+        fields = ['session_name', 'number_of_words', 'duration', 'description', 'photo', 'start_time', 'excerpt']
+        widgets = {
+            'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
+            'duration': forms.TimeInput(attrs={'type': 'time'}),
+        }
+        initial = {
+            'start_time': timezone.now,
+        }

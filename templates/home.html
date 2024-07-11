@@ -1,10 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Home</title>
-</head>
-<body>
-    <h2>Welcome to Kuripp</h2>
-    <p>This is the home page.</p>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Home - Kuripp{% endblock %}
+{% block content %}
+<div class="container mx-auto py-8">
+    <h2 class="text-2xl font-bold mb-6 text-center text-primary">Your Writing Sessions</h2>
+    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <ul>
+            {% for session in writing_sessions %}
+                <li class="mb-2 border-b pb-2">
+                    <h3 class="font-bold">{{ session.session_name }}</h3>
+                    <p>{{ session.number_of_words }} words, {{ session.duration }}</p>
+                    {% if session.description %}
+                        <blockquote class="italic">{{ session.description }}</blockquote>
+                    {% endif %}
+                    {% if session.photo %}
+                        <img src="{{ session.photo.url }}" alt="Session Photo" class="w-full h-auto mt-2">
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
