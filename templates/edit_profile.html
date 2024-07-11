@@ -1,19 +1,84 @@
 {% extends "base.html" %}
 {% load static %}
+{% load form_tags %}
+
+{% block extra_head %}
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+{% endblock %}
+
 {% block title %}Edit Profile - Kuripp{% endblock %}
+
 {% block content %}
-<div class="container mx-auto py-8">
-    <div class="max-w-md mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h2 class="text-2xl font-bold mb-6 text-center text-primary">Edit Profile</h2>
-        <form method="post" enctype="multipart/form-data">
+<div class="min-h-screen bg-base-200 flex flex-col justify-center items-center py-12">
+    <div class="max-w-md w-full space-y-8 p-8 bg-base-100 shadow-xl rounded-xl">
+        <div class="text-center">
+            <h2 class="mt-6 text-3xl font-bold text-gray-900">Edit Your Profile</h2>
+            <p class="mt-2 text-sm text-gray-600">Update your information and preferences</p>
+        </div>
+
+        <!-- Avatar Preview - Centered -->
+        <div class="flex justify-center">
+            {% include 'partials/avatar_container.html' with profile=user.userprofile %}
+        </div>
+
+        <form method="post" enctype="multipart/form-data" class="mt-8 space-y-6">
             {% csrf_token %}
-            {{ user_form.as_p }}
-            {{ profile_form.as_p }}
-            <div class="flex items-center justify-between mt-4">
-                <button type="submit" class="btn btn-primary">Save Changes</button>
+            
+            <!-- Hidden file input for profile image with HTMX -->
+            <div class="hidden">
+                <input type="file" 
+                       id="id_profile_image" 
+                       name="profile_image" 
+                       accept="image/*"
+                       hx-post="{% url 'upload_profile_image' %}"
+                       hx-target="#avatar-container"
+                       hx-trigger="change"
+                       hx-swap="outerHTML">
+            </div>
+
+            <!-- Rest of the form fields -->
+            {% for field in user_form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                        {{ field.label }}
+                    </label>
+                    <div class="mt-1">
+                        {{ field|add_class:"input input-bordered w-full" }}
+                    </div>
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <p class="mt-2 text-sm text-error">{{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            {% for field in profile_form %}
+                {% if field.name != 'profile_image' %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ field.label }}
+                        </label>
+                        <div class="mt-1">
+                            {% if field.name == 'bio' %}
+                                {{ field|add_class:"textarea textarea-bordered w-full" }}
+                            {% else %}
+                                {{ field|add_class:"input input-bordered w-full" }}
+                            {% endif %}
+                        </div>
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <p class="mt-2 text-sm text-error">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="flex items-center justify-between">
+                <button type="submit" class="btn btn-primary w-full">Save Changes</button>
             </div>
         </form>
     </div>
 </div>
 {% endblock %}
-

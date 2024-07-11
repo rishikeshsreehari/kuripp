@@ -8,6 +8,8 @@ from config import FOOTER_TEXT
 from .models import UserProfile, WritingSession  # Import the WritingSession model
 from .forms import CustomUserCreationForm, UserProfileForm, UserForm, WritingSessionForm
 from django.utils import timezone
+from django.views.decorators.http import require_POST
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -46,6 +48,35 @@ def logout_view(request):
     return redirect('home')
 
 
+
+
+
+
+#Logic for showing landing page or home feed based on login status
+def home(request):
+    if request.user.is_authenticated:
+        user = request.user
+        writing_sessions = WritingSession.objects.filter(user=user).order_by('-start_time')
+        return render(request, 'home.html', {'writing_sessions': writing_sessions, 'footer_text': FOOTER_TEXT})
+    else:
+        return render(request, 'landing.html', {'footer_text': FOOTER_TEXT})
+
+
+
+
+@login_required
+def add_session(request):
+    if request.method == "POST":
+        form = WritingSessionForm(request.POST, request.FILES)
+        if form.is_valid():
+            session = form.save(commit=False)
+            session.user = request.user
+            session.save()
+            messages.success(request, "Writing session added successfully.")
+            return redirect('profile')
+    else:
+        form = WritingSessionForm()
+    return render(request, 'add_session.html', {'form': form, 'footer_text': FOOTER_TEXT})
 
 
 @login_required
@@ -91,31 +122,23 @@ def profile(request):
 
     return render(request, 'profile.html', context)
 
-
-
-
-#Logic for showing landing page or home feed based on login status
-def home(request):
-    if request.user.is_authenticated:
-        user = request.user
-        writing_sessions = WritingSession.objects.filter(user=user).order_by('-start_time')
-        return render(request, 'home.html', {'writing_sessions': writing_sessions, 'footer_text': FOOTER_TEXT})
-    else:
-        return render(request, 'landing.html', {'footer_text': FOOTER_TEXT})
-
-
-
+@login_required
+@require_POST
+def upload_profile_image(request):
+    if request.FILES.get('profile_image'):
+        request.user.userprofile.profile_image = request.FILES['profile_image']
+        request.user.userprofile.save()
+    return render(request, 'partials/avatar_container.html', {
+        'profile': request.user.userprofile,
+        'footer_text': FOOTER_TEXT,
+    })
 
 @login_required
-def add_session(request):
-    if request.method == "POST":
-        form = WritingSessionForm(request.POST, request.FILES)
-        if form.is_valid():
-            session = form.save(commit=False)
-            session.user = request.user
-            session.save()
-            messages.success(request, "Writing session added successfully.")
-            return redirect('profile')
-    else:
-        form = WritingSessionForm()
-    return render(request, 'add_session.html', {'form': form, 'footer_text': FOOTER_TEXT})
+@require_POST
+def remove_profile_image(request):
+    profile = request.user.userprofile
+    if profile.profile_image:
+        profile.profile_image.delete()
+        profile.profile_image = None
+        profile.save()
+    return render(request, 'partials/avatar_container.html', {'profile': profile})

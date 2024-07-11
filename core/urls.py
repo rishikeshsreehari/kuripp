@@ -13,6 +13,8 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('edit-profile/', views.edit_profile, name='edit_profile'),
     path('add-session/', views.add_session, name='add_session'),
+    path('upload-profile-image/', views.upload_profile_image, name='upload_profile_image'),
+    path('remove-profile-image/', views.remove_profile_image, name='remove_profile_image'),
 ]
 
 if settings.DEBUG:
