@@ -3,47 +3,49 @@
 {% load form_tags %}
 {% block title %}Sign Up - Kuripp{% endblock %}
 {% block content %}
-<div class="flex items-center justify-center py-20 bg-gray-50">
-    <div class="w-full max-w-md">
-        <div class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
-            <h2 class="text-3xl font-serif font-bold mb-6 text-center text-primary">Join Kuripp</h2>
-            <p class="text-center text-gray-600 mb-6">Track your writing progress and reach your goals. Join thousands of writers on Kuripp.</p>
-            
-            <form method="post">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="mb-4">
-                        {{ field.label_tag }}
-                        {{ field|add_class:"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" }}
-                        {% if field.errors %}
-                            {% for error in field.errors %}
-                                <p class="text-red-500 text-xs italic mt-1">{{ error }}</p>
-                            {% endfor %}
-                        {% endif %}
-                    </div>
-                {% endfor %}
-                {% if messages %}
-                    <div class="mb-4">
-                        {% for message in messages %}
-                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                                <span class="block sm:inline">{{ message }}</span>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                <div class="flex items-center justify-between">
-                    <button class="w-full bg-primary text-white font-bold py-2 px-4 rounded-md hover:bg-primary-dark transition duration-300" type="submit">
-                        Sign Up
-                    </button>
-                </div>
-            </form>
-            <p class="mt-6 text-center text-gray-600 text-sm">
-                By signing up for Kuripp, you agree to our <a href="#" class="text-primary hover:underline">Terms of Service</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>.
-            </p>
-            <p class="mt-4 text-center text-gray-600">
-                Already a member? <a href="{% url 'login' %}" class="text-primary hover:underline">Log in</a>
-            </p>
-        </div>
+<div class="min-h-screen bg-base-200 flex flex-col justify-center items-center py-12">
+  <div class="max-w-md w-full space-y-8 p-8 bg-base-100 shadow-xl rounded-xl">
+    <div class="text-center">
+      <h2 class="mt-6 text-3xl font-bold text-gray-900">Join Kuripp</h2>
+      <p class="mt-2 text-sm text-gray-600">Track your writing progress and reach your goals. Join thousands of writers on Kuripp.</p>
     </div>
+    <form class="mt-8 space-y-6" method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        <div>
+          <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+            {{ field.label }}
+          </label>
+          <div class="mt-1">
+            {{ field|add_class:"input input-bordered w-full" }}
+          </div>
+          {% if field.errors %}
+            {% for error in field.errors %}
+              <p class="mt-2 text-sm text-error">{{ error }}</p>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endfor %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-error">
+            <span>{{ message }}</span>
+          </div>
+        {% endfor %}
+      {% endif %}
+      <div>
+        <button type="submit" class="btn btn-primary w-full">Sign Up</button>
+      </div>
+    </form>
+    <div class="text-sm text-center">
+      <p>By signing up for Kuripp, you agree to our 
+        <a href="#" class="link link-primary">Terms of Service</a> and 
+        <a href="#" class="link link-primary">Privacy Policy</a>.
+      </p>
+      <p class="mt-2">
+        Already have an account? <a href="{% url 'login' %}" class="link link-primary">Log in</a>
+      </p>
+    </div>
+  </div>
 </div>
 {% endblock %}
