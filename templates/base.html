@@ -3,15 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Kuripp{% endblock %}</title>
     {% load static %}
     <link href="{% static 'css/output.css' %}" rel="stylesheet">
-    <title>{% block title %}Kuripp{% endblock %}</title>
 </head>
-<body class="bg-background min-h-screen flex flex-col">
+<body>
     {% include 'header.html' %}
-    <main class="flex-grow container mx-auto py-4">
+    <div class="min-h-screen">
+        {% if messages %}
+            <div class="container mx-auto mt-4">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} bg-blue-100 border-t-4 border-blue-500 rounded-b text-blue-900 px-4 py-3 shadow-md mb-4">
+                        <div class="flex">
+                            <div class="py-1">
+                                <svg class="fill-current h-6 w-6 text-blue-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M10 15a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM10 4a1 1 0 00-.894.553L4.618 13H15.382l-4.488-8.447A1 1 0 0010 4z" /></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold">{{ message }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <script>
+                setTimeout(function() {
+                    var alerts = document.querySelectorAll('.alert');
+                    alerts.forEach(function(alert) {
+                        alert.style.display = 'none';
+                    });
+                }, 5000); // Adjust the time as needed (5000 milliseconds = 5 seconds)
+            </script>
+        {% endif %}
         {% block content %}{% endblock %}
-    </main>
+    </div>
     {% include 'footer.html' %}
 </body>
 </html>
