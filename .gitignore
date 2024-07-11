@@ -1,0 +1,42 @@
+# Virtual environment
+venv/
+env/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.env
+*.env.local
+
+# Django migrations
+*/migrations/*
+
+# Database files
+*.sqlite3
+
+# VS Code settings
+.vscode/
+
+# Python Bytecode
+*.py[cod]
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# macOS
+.DS_Store
+
+# PyCharm
+.idea/
+
+# Log files
+*.log
+
+# Static files
+staticfiles/
+
+# Media files
+media/
+
+# Node modules
+node_modules/

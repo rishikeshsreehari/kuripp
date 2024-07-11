@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link href="{% static 'css/output.css' %}" rel="stylesheet">
+    <title>{% block title %}Kuripp{% endblock %}</title>
+</head>
+<body class="bg-background min-h-screen flex flex-col">
+    {% include 'header.html' %}
+    <main class="flex-grow container mx-auto py-4">
+        {% block content %}{% endblock %}
+    </main>
+    {% include 'footer.html' %}
+</body>
+</html>
