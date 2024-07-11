@@ -94,13 +94,14 @@ def profile(request):
 
 
 
-
-@login_required
+#Logic for showing landing page or home feed based on login status
 def home(request):
-    user = request.user
-    writing_sessions = WritingSession.objects.filter(user=user).order_by('-start_time')
-    return render(request, 'home.html', {'writing_sessions': writing_sessions, 'footer_text': FOOTER_TEXT})
-
+    if request.user.is_authenticated:
+        user = request.user
+        writing_sessions = WritingSession.objects.filter(user=user).order_by('-start_time')
+        return render(request, 'home.html', {'writing_sessions': writing_sessions, 'footer_text': FOOTER_TEXT})
+    else:
+        return render(request, 'landing.html', {'footer_text': FOOTER_TEXT})
 
 
 
