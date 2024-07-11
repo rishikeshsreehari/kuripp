@@ -3,54 +3,44 @@
 {% load form_tags %}
 {% block title %}Sign Up - Kuripp{% endblock %}
 {% block content %}
-<div class="flex items-center justify-center py-16">
+<div class="flex items-center justify-center py-20 bg-gray-50">
     <div class="w-full max-w-md">
-        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <h2 class="text-2xl font-bold mb-6 text-center text-primary">Sign Up for Kuripp</h2>
+        <div class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+            <h2 class="text-3xl font-serif font-bold mb-6 text-center text-primary">Join Kuripp</h2>
             <form method="post">
                 {% csrf_token %}
-                <div class="mb-4">
-                    {{ form.username.label_tag }}
-                    {{ form.username|add_class:"input input-bordered w-full" }}
-                </div>
-                <div class="mb-4">
-                    {{ form.email.label_tag }}
-                    {{ form.email|add_class:"input input-bordered w-full" }}
-                </div>
-                <div class="mb-4">
-                    {{ form.first_name.label_tag }}
-                    {{ form.first_name|add_class:"input input-bordered w-full" }}
-                </div>
-                <div class="mb-4">
-                    {{ form.last_name.label_tag }}
-                    {{ form.last_name|add_class:"input input-bordered w-full" }}
-                </div>
-                <div class="mb-4">
-                    {{ form.password1.label_tag }}
-                    {{ form.password1|add_class:"input input-bordered w-full" }}
-                </div>
-                <div class="mb-4">
-                    {{ form.password2.label_tag }}
-                    {{ form.password2|add_class:"input input-bordered w-full" }}
-                </div>
+                {% for field in form %}
+                    <div class="mb-4">
+                        {{ field.label_tag }}
+                        {{ field|add_class:"w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" }}
+                        {% if field.errors %}
+                            {% for error in field.errors %}
+                                <p class="text-red-500 text-xs italic">{{ error }}</p>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                {% endfor %}
                 {% if messages %}
                     <div class="mb-4">
                         {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }} shadow-lg">
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1 4v-4m0 4h1m-1-4h-1m-6 4h2m10 0h-2m4-4h-8m2-4h-1v-4h-1m1 4v-4m0 4h1m-1-4h-1m6 4h2m10 0h-2m-4 4H5m14 0h2M5 8H3m4-4H5m14 0h-2M9 8H7m2 4H9m0-8H7m8 0h-2m0 8h2m0 4h-2m0-8h2M3 12h2m-2 4h2m-2 4h2m4-8H5m14 0h-2"/></svg>
-                                    <span>{{ message }}</span>
-                                </div>
+                            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                                <span class="block sm:inline">{{ message }}</span>
                             </div>
                         {% endfor %}
                     </div>
                 {% endif %}
                 <div class="flex items-center justify-between">
-                    <button class="btn btn-primary w-full" type="submit">Sign Up</button>
+                    <button class="w-full bg-primary text-white font-bold py-2 px-4 rounded-md hover:bg-primary-dark transition duration-300" type="submit">
+                        Sign Up
+                    </button>
                 </div>
             </form>
-            <p class="mt-4 text-center">Already a user? <a href="{% url 'login' %}" class="text-blue-500 underline">Login here</a>.</p>
+            <p class="mt-6 text-center text-gray-600">
+                Already a user? <a href="{% url 'login' %}" class="text-primary hover:underline">Login here</a>.
+            </p>
         </div>
     </div>
 </div>
 {% endblock %}
+
+
