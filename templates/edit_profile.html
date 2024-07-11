@@ -2,8 +2,30 @@
 {% load static %}
 {% load form_tags %}
 
-{% block extra_head %}
+{% block extra_js %}
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('id_profile_image');
+            const avatarPreview = document.getElementById('avatarPreview');
+            const originalSrc = avatarPreview.src;
+
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        avatarPreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            // Reset preview if form is reset
+            document.querySelector('form').addEventListener('reset', function() {
+                avatarPreview.src = originalSrc;
+            });
+        });
+    </script>
 {% endblock %}
 
 {% block title %}Edit Profile - Kuripp{% endblock %}
@@ -24,16 +46,12 @@
         <form method="post" enctype="multipart/form-data" class="mt-8 space-y-6">
             {% csrf_token %}
             
-            <!-- Hidden file input for profile image with HTMX -->
+            <!-- Hidden file input for profile image -->
             <div class="hidden">
                 <input type="file" 
                        id="id_profile_image" 
                        name="profile_image" 
-                       accept="image/*"
-                       hx-post="{% url 'upload_profile_image' %}"
-                       hx-target="#avatar-container"
-                       hx-trigger="change"
-                       hx-swap="outerHTML">
+                       accept="image/*">
             </div>
 
             <!-- Rest of the form fields -->
@@ -75,8 +93,9 @@
                 {% endif %}
             {% endfor %}
 
-            <div class="flex items-center justify-between">
-                <button type="submit" class="btn btn-primary w-full">Save Changes</button>
+            <div class="flex items-center justify-between space-x-4">
+                <button type="submit" class="btn btn-primary flex-grow">Save Changes</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
             </div>
         </form>
     </div>
