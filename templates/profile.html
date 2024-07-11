@@ -1,25 +1,91 @@
 {% extends "base.html" %}
-{% block title %}Profile - Kuripp{% endblock %}
+{% load static %}
+{% block title %}{{ user.first_name }}'s Profile - Kuripp{% endblock %}
 {% block content %}
-<div class="container mx-auto py-8">
-    <div class="max-w-md mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <div class="flex justify-between items-center">
-            <h2 class="text-2xl font-bold mb-6 text-center text-primary">{{ user.first_name }} {{ user.last_name }}</h2>
-            <a href="{% url 'edit_profile' %}" class="btn btn-secondary">Edit Profile</a>
+<div class="container mx-auto py-8 px-4">
+    <div class="bg-white shadow-xl rounded-lg overflow-hidden">
+        <!-- Cover Photo -->
+        <div class="h-48 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+        
+        <!-- Profile Header -->
+        <div class="relative px-4 py-5 sm:px-6 -mt-16">
+            <div class="flex items-end">
+                <img src="{% if profile.profile_image %}{{ profile.profile_image.url }}{% else %}https://api.dicebear.com/9.x/notionists/svg?seed={{ user.first_name }}{% endif %}" alt="Profile Picture" class="w-32 h-32 rounded-full border-4 border-white shadow-lg">
+                <div class="ml-4 mb-2">
+                    <h1 class="text-3xl font-bold text-gray-900">{{ user.first_name }} {{ user.last_name }}</h1>
+                    <p class="text-gray-600">{{ profile.location }}</p>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-between items-center">
+                <p class="text-gray-600 max-w-2xl">{{ profile.bio|default:"No bio available" }}</p>
+                <a href="{% url 'edit_profile' %}" class="btn btn-primary">Edit Profile</a>
+            </div>
         </div>
-        <div class="flex items-center justify-center">
-            <img src="{% if profile.profile_image %}{{ profile.profile_image.url }}{% else %}https://api.dicebear.com/9.x/notionists/svg?seed={{ user.first_name }}{% endif %}" alt="Profile Picture" class="w-24 h-24 rounded-full mb-4">
+
+        <!-- Stats Overview -->
+        <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                <div>
+                    <p class="text-3xl font-bold text-primary">{{ number_of_sessions }}</p>
+                    <p class="text-gray-600">Total Sessions</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-primary">{{ avg_wpm|floatformat:1 }}</p>
+                    <p class="text-gray-600">Avg. WPM</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold text-primary">{{ current_streak }}</p>
+                    <p class="text-gray-600">Current Streak</p>
+                </div>
+            </div>
         </div>
-        <div class="text-center">
-            <p class="text-lg">Currently in {{ profile.location }}</p>
-            <p class="text-gray-600 mt-4">{{ profile.bio }}</p>
+
+        <!-- Writing Activity Chart (Placeholder) -->
+        <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+            <h3 class="text-lg font-medium text-gray-900">Writing Activity</h3>
+            <div class="mt-4 h-64 bg-gray-100 rounded-lg flex items-center justify-center">
+                <p class="text-gray-500">Activity chart coming soon!</p>
+            </div>
         </div>
-        <div class="mt-6 text-center">
-            <h3 class="text-xl font-bold">Analytics</h3>
-            <p>Total Sessions: {{ number_of_sessions }}</p>
-            <p>Average WPM: {{ avg_wpm }}</p>
-            <p>Current Streak: {{ current_streak }}</p>
+
+        <!-- Recent Sessions -->
+        <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Writing Sessions</h3>
+            <div class="space-y-4">
+                {% for i in '12345'|make_list %}
+                    <div class="bg-gray-50 p-4 rounded-lg shadow">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h4 class="font-semibold">Session #{{ forloop.counter }}</h4>
+                                <p class="text-sm text-gray-600">Date: {% now "F j, Y" %}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-primary">{{ avg_wpm|add:forloop.counter0 }} WPM</p>
+                                <p class="text-sm text-gray-600">{{ forloop.counter|add:45 }} minutes</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
+
+        <!-- Writing Projects (Placeholder) -->
+<div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+    <h3 class="text-lg font-medium text-gray-900 mb-4">Writing Projects</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {% for i in '123'|make_list %}
+            <div class="bg-gray-50 p-4 rounded-lg shadow">
+                <h4 class="font-semibold">Project {{ forloop.counter }}</h4>
+                <p class="text-sm text-gray-600">Last updated: {% now "F j, Y" %}</p>
+                <div class="mt-2 h-2 bg-gray-200 rounded-full">
+                    <div class="h-2 bg-primary rounded-full" style="width: {% widthratio forloop.counter 3 100 %}%;"></div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
     </div>
 </div>
 {% endblock %}
