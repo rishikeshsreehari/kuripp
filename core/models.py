@@ -22,19 +22,14 @@ class UserProfile(models.Model):
 
 
 class WritingSession(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='writing_sessions')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     session_name = models.CharField(max_length=200)
     number_of_words = models.IntegerField()
-    duration = models.DurationField(default=datetime.timedelta)  # Ensure you import datetime
-    description = models.TextField(null=True, blank=True)
-    photo = models.ImageField(upload_to='session_photos/', null=True, blank=True)
-    start_time = models.DateTimeField(default=timezone.now)
-    end_time = models.DateTimeField(null=True, blank=True)
-    excerpt = models.TextField(null=True, blank=True, default='')
-
-    def save(self, *args, **kwargs):
-        self.end_time = self.start_time + self.duration
-        super().save(*args, **kwargs)
+    duration = models.DurationField()
+    description = models.TextField(blank=True)
+    photo = models.ImageField(upload_to='session_photos/', blank=True, null=True)
+    start_time = models.DateTimeField()
+    excerpt = models.TextField(blank=True)
 
     def __str__(self):
         return self.session_name

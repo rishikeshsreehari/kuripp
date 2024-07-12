@@ -51,32 +51,29 @@ def logout_view(request):
 
 
 
+from django.shortcuts import render
+from .models import WritingSession
+from config import FOOTER_TEXT
 
-#Logic for showing landing page or home feed based on login status
 def home(request):
     if request.user.is_authenticated:
         user = request.user
         writing_sessions = WritingSession.objects.filter(user=user).order_by('-start_time')
-        return render(request, 'home.html', {'writing_sessions': writing_sessions, 'footer_text': FOOTER_TEXT})
+        
+        for session in writing_sessions:
+            duration_hours = session.duration.total_seconds() / 3600  # Convert duration to hours
+            if duration_hours > 0:
+                session.wph = round(session.number_of_words / duration_hours)
+            else:
+                session.wph = 0
+
+        return render(request, 'home.html', {
+            'writing_sessions': writing_sessions, 
+            'footer_text': FOOTER_TEXT
+        })
     else:
         return render(request, 'landing.html', {'footer_text': FOOTER_TEXT})
 
-
-
-
-@login_required
-def add_session(request):
-    if request.method == "POST":
-        form = WritingSessionForm(request.POST, request.FILES)
-        if form.is_valid():
-            session = form.save(commit=False)
-            session.user = request.user
-            session.save()
-            messages.success(request, "Writing session added successfully.")
-            return redirect('profile')
-    else:
-        form = WritingSessionForm()
-    return render(request, 'add_session.html', {'form': form, 'footer_text': FOOTER_TEXT})
 
 
 @login_required
@@ -142,3 +139,23 @@ def remove_profile_image(request):
         profile.profile_image = None
         profile.save()
     return render(request, 'partials/avatar_container.html', {'profile': profile})
+
+
+
+
+
+@login_required
+def add_session(request):
+    if request.method == "POST":
+        form = WritingSessionForm(request.POST, request.FILES)
+        if form.is_valid():
+            session = form.save(commit=False)
+            session.user = request.user
+            session.save()
+            messages.success(request, "Writing session logged successfully!")
+            return redirect('home')  # Changed from 'dashboard' to 'home'
+        else:
+            messages.error(request, "There was an error with your submission. Please check the form and try again.")
+    else:
+        form = WritingSessionForm()
+    return render(request, 'add_session.html', {'form': form})

@@ -1,15 +1,131 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Add Writing Session - Kuripp{% endblock %}
+{% load form_tags %}
+{% block title %}Log Writing Session - Kuripp{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('id_photo');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImage');
+
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                    removeImageBtn.classList.remove('hidden');
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        removeImageBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            fileInput.value = '';
+            imagePreview.src = '';
+            imagePreview.classList.add('hidden');
+            removeImageBtn.classList.add('hidden');
+        });
+    });
+</script>
+{% endblock %}
+
 {% block content %}
-<div class="container mx-auto py-8">
-    <div class="max-w-md mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <h2 class="text-2xl font-bold mb-6 text-center text-primary">Add Writing Session</h2>
-        <form method="post" enctype="multipart/form-data">
+<div class="container mx-auto py-8 px-4">
+    {% if messages %}
+    <div class="max-w-2xl mx-auto mb-4">
+        {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="max-w-2xl mx-auto bg-base-100 shadow-xl rounded-lg overflow-hidden">
+        <div class="bg-primary text-primary-content py-6 px-6">
+            <h2 class="text-3xl font-serif font-bold">Log Writing Session</h2>
+        </div>
+        <form method="post" enctype="multipart/form-data" class="p-6 space-y-6">
             {% csrf_token %}
-            {{ form.as_p }}
-            <div class="flex justify-center">
-                <button type="submit" class="btn btn-primary">Add Session</button>
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="form-control">
+                <label for="{{ form.session_name.id_for_label }}" class="label">
+                    <span class="label-text">Title</span>
+                </label>
+                {{ form.session_name }}
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.start_time.id_for_label }}" class="label">
+                    <span class="label-text">Start Time</span>
+                </label>
+                {{ form.start_time }}
+            </div>
+
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Duration</span>
+                </label>
+                <div class="flex items-center space-x-2">
+                    <div class="input-group">
+                        {{ form.hours }}
+                        <span class="px-2">hr</span>
+                    </div>
+                    <div class="input-group">
+                        {{ form.minutes }}
+                        <span class="px-2">min</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.number_of_words.id_for_label }}" class="label">
+                    <span class="label-text">Word Count</span>
+                    <span class="label-text-alt" title="Number of words written">ⓘ</span>
+                </label>
+                {{ form.number_of_words }}
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.description.id_for_label }}" class="label">
+                    <span class="label-text">Description</span>
+                    <span class="label-text-alt" title="Detailed description of the writing session">ⓘ</span>
+                </label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.excerpt.id_for_label }}" class="label">
+                    <span class="label-text">Excerpt</span>
+                    <span class="label-text-alt" title="A short sample of your writing from this session">ⓘ</span>
+                </label>
+                {{ form.excerpt }}
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.photo.id_for_label }}" class="label">
+                    <span class="label-text">Image</span>
+                </label>
+                <div class="flex items-center space-x-4">
+                    {{ form.photo }}
+                    <button id="removeImage" class="hidden btn btn-ghost btn-sm text-error">Remove</button>
+                </div>
+                <img id="imagePreview" src="" alt="Image preview" class="hidden mt-2 max-w-xs rounded-lg shadow-md">
+            </div>
+
+            <div class="mt-8">
+                <button type="submit" class="btn btn-primary btn-block">Log Session</button>
             </div>
         </form>
     </div>

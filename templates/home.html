@@ -1,23 +1,81 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}Home - Kuripp{% endblock %}
 {% block content %}
-<div class="container mx-auto py-8">
-    <h2 class="text-2xl font-bold mb-6 text-center text-primary">Your Writing Sessions</h2>
-    <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-        <ul>
-            {% for session in writing_sessions %}
-                <li class="mb-2 border-b pb-2">
-                    <h3 class="font-bold">{{ session.session_name }}</h3>
-                    <p>{{ session.number_of_words }} words, {{ session.duration }}</p>
+<div class="container mx-auto py-8 px-4">
+    <h2 class="text-3xl font-serif font-bold mb-8 text-center text-primary">Your Writing Journey</h2>
+    <div class="max-w-2xl mx-auto space-y-6">
+        {% for session in writing_sessions %}
+            <div class="bg-white shadow-md rounded-lg overflow-hidden">
+                <div class="p-4">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                            {% if session.user.userprofile.profile_image %}
+                                <img src="{{ session.user.userprofile.profile_image.url }}" alt="{{ session.user.username }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <img src="https://api.dicebear.com/9.x/notionists/svg?seed={{ session.user.first_name }}" alt="{{ session.user.username }}" class="w-full h-full object-cover">
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow">
+                            <h3 class="font-bold text-lg">{{ session.user.get_full_name|default:session.user.username }}</h3>
+                            <p class="text-sm text-gray-500">{{ session.start_time|date:"F j, Y, g:i a" }}</p>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" title="Edit session">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <h4 class="font-semibold text-xl mb-2">{{ session.session_name }}</h4>
+                    <div class="flex justify-between items-center mb-4 text-sm">
+                        <div class="text-center">
+                            <p class="text-gray-500">Duration</p>
+                            <p class="font-semibold">{{ session.duration }}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-500">Words</p>
+                            <p class="font-semibold">{{ session.number_of_words }}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-500">WPH</p>
+                            <p class="font-semibold">{{ session.wph }}</p>
+                        </div>
+                    </div>
                     {% if session.description %}
-                        <blockquote class="italic">{{ session.description }}</blockquote>
+                        <p class="text-gray-700 mb-4">{{ session.description }}</p>
                     {% endif %}
-                    {% if session.photo %}
-                        <img src="{{ session.photo.url }}" alt="Session Photo" class="w-full h-auto mt-2">
+                    {% if session.excerpt %}
+                        <blockquote class="italic border-l-4 border-primary pl-4 py-2 mb-4 text-gray-600">
+                            "{{ session.excerpt }}"
+                        </blockquote>
                     {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+                </div>
+                {% if session.photo %}
+                    <div class="w-full h-64 overflow-hidden">
+                        <img src="{{ session.photo.url }}" alt="Session Photo" class="w-full h-full object-cover">
+                    </div>
+                {% endif %}
+                <div class="px-4 py-3 bg-gray-50 flex justify-between items-center">
+                    <button class="btn btn-ghost btn-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
+                        </svg>
+                        Encourage
+                    </button>
+                    <button class="btn btn-ghost btn-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-1">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                        </svg>
+                        Comment
+                    </button>
+                </div>
+            </div>
+        {% empty %}
+            <div class="text-center py-8">
+                <p class="text-xl text-gray-600">You haven't logged any writing sessions yet.</p>
+                <a href="{% url 'add_session' %}" class="btn btn-primary mt-4">Log Your First Session</a>
+            </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
