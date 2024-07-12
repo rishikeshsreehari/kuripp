@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
+{% load form_tags %}
 {% block title %}Home - Kuripp{% endblock %}
 {% block content %}
 <div class="container mx-auto py-8 px-4">
-    <h2 class="text-3xl font-serif font-bold mb-8 text-center text-primary">Your Writing Journey</h2>
     <div class="max-w-2xl mx-auto space-y-6">
         {% for session in writing_sessions %}
             <div class="bg-white shadow-md rounded-lg overflow-hidden">
@@ -18,7 +18,13 @@
                         </div>
                         <div class="flex-grow">
                             <h3 class="font-bold text-lg">{{ session.user.get_full_name|default:session.user.username }}</h3>
-                            <p class="text-sm text-gray-500">{{ session.start_time|date:"F j, Y, g:i a" }}</p>
+                            <p class="text-sm text-gray-500 flex items-center">
+                                <!-- Alternative fountain pen icon -->
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                {{ session.start_time|date:"F j, Y, g:i a" }}
+                            </p>
                         </div>
                         <button class="btn btn-ghost btn-sm" title="Edit session">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
@@ -27,20 +33,6 @@
                         </button>
                     </div>
                     <h4 class="font-semibold text-xl mb-2">{{ session.session_name }}</h4>
-                    <div class="flex justify-between items-center mb-4 text-sm">
-                        <div class="text-center">
-                            <p class="text-gray-500">Duration</p>
-                            <p class="font-semibold">{{ session.duration }}</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-gray-500">Words</p>
-                            <p class="font-semibold">{{ session.number_of_words }}</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-gray-500">WPH</p>
-                            <p class="font-semibold">{{ session.wph }}</p>
-                        </div>
-                    </div>
                     {% if session.description %}
                         <p class="text-gray-700 mb-4">{{ session.description }}</p>
                     {% endif %}
@@ -49,24 +41,47 @@
                             "{{ session.excerpt }}"
                         </blockquote>
                     {% endif %}
+                    
+                    <!-- Moved and enlarged parameters section -->
+                    <div class="flex items-center justify-between mb-4 text-lg bg-gray-100 p-4 rounded-lg">
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="font-semibold">{{ session.duration|duration_format }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                            </svg>
+                            <span class="font-semibold">{{ session.number_of_words }} words</span>
+                        </div>
+                        <div class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <span class="font-semibold">{{ session.wph }} WPH</span>
+                        </div>
+                    </div>
                 </div>
+                
                 {% if session.photo %}
                     <div class="w-full h-64 overflow-hidden">
                         <img src="{{ session.photo.url }}" alt="Session Photo" class="w-full h-full object-cover">
                     </div>
                 {% endif %}
-                <div class="px-4 py-3 bg-gray-50 flex justify-between items-center">
-                    <button class="btn btn-ghost btn-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-1">
+                
+                <!-- Moved like and comment buttons to the left -->
+                <div class="px-4 py-3 bg-gray-50 flex justify-start items-center space-x-2">
+                    <button class="btn btn-ghost btn-sm" title="Encourage">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
                         </svg>
-                        Encourage
                     </button>
-                    <button class="btn btn-ghost btn-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5 mr-1">
+                    <button class="btn btn-ghost btn-sm" title="Comment">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                         </svg>
-                        Comment
                     </button>
                 </div>
             </div>
