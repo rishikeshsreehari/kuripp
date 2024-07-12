@@ -15,6 +15,8 @@ urlpatterns = [
     path('add-session/', views.add_session, name='add_session'),
     path('upload-profile-image/', views.upload_profile_image, name='upload_profile_image'),
     path('remove-profile-image/', views.remove_profile_image, name='remove_profile_image'),
+    path('edit-session/<int:session_id>/', views.edit_session, name='edit_session'),
+    path('delete-session/<int:session_id>/', views.delete_session, name='delete_session'),
 ]
 
 if settings.DEBUG:

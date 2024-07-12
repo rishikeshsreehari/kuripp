@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Delete Writing Session - Kuripp{% endblock %}
+{% block content %}
+<div class="container mx-auto py-8 px-4">
+    <div class="max-w-md mx-auto bg-white shadow-xl rounded-lg overflow-hidden">
+        <div class="bg-error text-white py-4 px-6">
+            <h2 class="text-2xl font-bold">Delete Writing Session</h2>
+        </div>
+        <div class="p-6">
+            <p class="mb-4">Are you sure you want to delete the writing session "{{ session.session_name }}"?</p>
+            <form method="post">
+                {% csrf_token %}
+                <div class="flex justify-between items-center">
+                    <button type="submit" class="btn btn-error">Delete Session</button>
+                    <a href="{% url 'edit_session' session.id %}" class="btn btn-ghost">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

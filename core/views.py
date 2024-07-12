@@ -10,6 +10,7 @@ from .forms import CustomUserCreationForm, UserProfileForm, UserForm, WritingSes
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 
 
 
@@ -141,21 +142,42 @@ def remove_profile_image(request):
     return render(request, 'partials/avatar_container.html', {'profile': profile})
 
 
-
-
-
 @login_required
 def add_session(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         form = WritingSessionForm(request.POST, request.FILES)
         if form.is_valid():
             session = form.save(commit=False)
             session.user = request.user
             session.save()
-            messages.success(request, "Writing session logged successfully!")
-            return redirect('home')  # Changed from 'dashboard' to 'home'
-        else:
-            messages.error(request, "There was an error with your submission. Please check the form and try again.")
+            messages.success(request, 'Writing session added successfully.')
+            return redirect('home')
     else:
         form = WritingSessionForm()
-    return render(request, 'add_session.html', {'form': form})
+    return render(request, 'add_edit_session.html', {'form': form, 'is_edit': False})
+
+@login_required
+def edit_session(request, session_id):
+    session = get_object_or_404(WritingSession, id=session_id, user=request.user)
+    if request.method == 'POST':
+        form = WritingSessionForm(request.POST, request.FILES, instance=session)
+        if form.is_valid():
+            if request.POST.get('image_clear') == 'true':
+                session.photo.delete()
+                session.photo = None
+            form.save()
+            messages.success(request, 'Writing session updated successfully.')
+            return redirect('home')
+    else:
+        form = WritingSessionForm(instance=session)
+    return render(request, 'add_edit_session.html', {'form': form, 'is_edit': True, 'session': session})
+
+@login_required
+def delete_session(request, session_id):
+    session = get_object_or_404(WritingSession, id=session_id, user=request.user)
+    if request.method == 'POST':
+        session.delete()
+        messages.success(request, 'Writing session deleted successfully.')
+        return redirect('home')
+    return render(request, 'delete_session_confirm.html', {'session': session})
+

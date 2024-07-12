@@ -5,6 +5,8 @@ register = template.Library()
 
 @register.filter(name='add_class')
 def add_class(value, css_class):
+    if isinstance(value, str):
+        return value
     return value.as_widget(attrs={'class': css_class})
 
 @register.filter(name='duration_format')

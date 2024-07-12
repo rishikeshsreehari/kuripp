@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+{% load form_tags %}
+{% block title %}{% if is_edit %}Edit{% else %}Log{% endif %} Writing Session - Kuripp{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('id_photo');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImage');
+
+        fileInput.addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                    removeImageBtn.classList.remove('hidden');
+                }
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        removeImageBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            fileInput.value = '';
+            imagePreview.src = '';
+            imagePreview.classList.add('hidden');
+            removeImageBtn.classList.add('hidden');
+            
+            // Add a hidden input to signal image removal on the server
+            if (!document.getElementById('image_clear')) {
+                const clearInput = document.createElement('input');
+                clearInput.type = 'hidden';
+                clearInput.id = 'image_clear';
+                clearInput.name = 'image_clear';
+                clearInput.value = 'true';
+                fileInput.parentNode.appendChild(clearInput);
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-8 px-4">
+    {% if messages %}
+    <div class="max-w-2xl mx-auto mb-4">
+        {% for message in messages %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="max-w-2xl mx-auto bg-base-100 shadow-xl rounded-lg overflow-hidden">
+        <div class="bg-primary text-primary-content py-6 px-6">
+            <h2 class="text-3xl font-serif font-bold">{% if is_edit %}Edit{% else %}Log{% endif %} Writing Session</h2>
+        </div>
+        <form method="post" enctype="multipart/form-data" class="p-6 space-y-6">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-error">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="form-control">
+                <label for="{{ form.session_name.id_for_label }}" class="label">
+                    <span class="label-text">Title</span>
+                </label>
+                {{ form.session_name|add_class:"input input-bordered w-full" }}
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.start_time.id_for_label }}" class="label">
+                    <span class="label-text">Start Time</span>
+                </label>
+                {{ form.start_time|add_class:"input input-bordered w-full" }}
+            </div>
+
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Duration</span>
+                </label>
+                <div class="flex items-center space-x-2">
+                    <div class="input-group">
+                        {{ form.hours|add_class:"input input-bordered" }}
+                        <span class="px-2">hr</span>
+                    </div>
+                    <div class="input-group">
+                        {{ form.minutes|add_class:"input input-bordered" }}
+                        <span class="px-2">min</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.number_of_words.id_for_label }}" class="label">
+                    <span class="label-text">Word Count</span>
+                    <span class="label-text-alt" title="Number of words written">ⓘ</span>
+                </label>
+                {{ form.number_of_words|add_class:"input input-bordered w-full" }}
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.description.id_for_label }}" class="label">
+                    <span class="label-text">Description</span>
+                    <span class="label-text-alt" title="Detailed description of the writing session">ⓘ</span>
+                </label>
+                {{ form.description|add_class:"textarea textarea-bordered w-full h-24" }}
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.excerpt.id_for_label }}" class="label">
+                    <span class="label-text">Excerpt</span>
+                    <span class="label-text-alt" title="A short sample of your writing from this session">ⓘ</span>
+                </label>
+                {{ form.excerpt|add_class:"textarea textarea-bordered w-full h-24" }}
+            </div>
+
+            <div class="form-control">
+                <label for="{{ form.photo.id_for_label }}" class="label">
+                    <span class="label-text">Image</span>
+                </label>
+                <div class="flex items-center space-x-4">
+                    {{ form.photo|add_class:"input input-bordered" }}
+                    <button id="removeImage" class="{% if not form.instance.photo %}hidden{% endif %} btn btn-ghost btn-sm text-error">Remove</button>
+                </div>
+                <img id="imagePreview" src="{% if form.instance.photo %}{{ form.instance.photo.url }}{% endif %}" 
+                     alt="Image preview" 
+                     class="{% if not form.instance.photo %}hidden{% endif %} mt-2 max-w-xs rounded-lg shadow-md">
+            </div>
+
+            <div class="mt-8 flex justify-between items-center">
+                <button type="submit" class="btn btn-primary">
+                    {% if is_edit %}Update{% else %}Log{% endif %} Session
+                </button>
+                {% if is_edit %}
+                    <a href="{% url 'delete_session' session.id %}" class="btn btn-error">Delete Session</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
